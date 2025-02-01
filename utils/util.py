@@ -1,8 +1,8 @@
 from typing import List
 
 
-def get_bit(x: int, i: int) -> bool:
-    return bool((x >> i) & 1)
+def get_bit(x: int, i: int) -> int:
+    return (x >> i) & 1
 
 
 def get_bit_list(x: int) -> List[List[int]]:

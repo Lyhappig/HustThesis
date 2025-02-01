@@ -53,9 +53,6 @@ def G16_inv(alpha: int) -> int:
 
     D1 = G4_mul(C4, A1)
     D0 = G4_mul(C4, C2)
-
-    res = get_num([D1, D0], 2)
-    gf16_sbox[alpha] = res
     return get_num([D1, D0], 2)
 
 
@@ -63,4 +60,4 @@ gf16_sbox = [0x0, 0x1, 0x3, 0x2, 0xf, 0xc, 0x9, 0xb, 0xa, 0x6, 0x8, 0x7, 0x5, 0x
 
 
 def G16_inv_box(alpha: int) -> int:
-    return gf16_sbox(alpha)
+    return gf16_sbox[alpha]

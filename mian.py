@@ -77,7 +77,7 @@ def SM4_SBOX(x):
     t = G256_new_basis(x, M)  # 仿射变换乘
     t ^= 0xd3
     t = G256_new_basis(t, poly_to_tower_mt)
-    t = G256_inv(t)
+    t = G256_inv2(t)
     t = G256_new_basis(t, tower_to_poly_mt)
     t = G256_new_basis(t, M)  # 仿射变换乘
     return t ^ 0xd3

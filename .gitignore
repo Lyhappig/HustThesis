@@ -1,0 +1,40 @@
+# PyCharm 项目文件
+.idea/
+*.iml
+
+# Python 缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 虚拟环境
+venv/
+env/
+*.venv/
+bin/
+lib/
+include/
+pip-selfcheck.json
+.Python
+
+# 日志和数据库文件
+*.log
+*.sqlite3
+
+# 测试和覆盖率文件
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# 打包和发布文件
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+
+# 其他
+.DS_Store
+*.swp
+*.swo

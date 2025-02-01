@@ -56,18 +56,18 @@ def is_equal(A, B):
 
 
 if __name__ == "__main__":
-    # gx = GF2Matrix(trans_matrix(TX))
-    # gx_inv = gx.inverse()
-    # gm = GF2Matrix(M)
-    # mx = gm * gx_inv
-    # MX = trans_matrix(TMX)
-    # print(is_equal(mx.matrix, MX))
-    #
-    # poly_to_tower = gx
-    # poly_to_tower.T()
-    # print(poly_to_tower)
-    #
-    # tower_to_poly = gx_inv
-    # tower_to_poly.T()
-    # print(tower_to_poly)
+    gx = GF2Matrix(trans_matrix(TX))
+    gx_inv = gx.inverse()
+    gm = GF2Matrix(M)
+    mx = gm * gx_inv
+    MX = trans_matrix(TMX)
+    print(is_equal(mx.matrix, MX))
+
+    poly_to_tower = gx
+    poly_to_tower.T()
+    print(poly_to_tower)
+
+    tower_to_poly = gx_inv
+    tower_to_poly.T()
+    print(tower_to_poly)
 

@@ -73,7 +73,17 @@ S(x) = M(Mx + C)^-1 + C
 '''
 
 
-def SM4_SBOX(x):
+def SM4_SBOX1(x):
+    t = G256_new_basis(x, M)  # 仿射变换乘
+    t ^= 0xd3
+    t = G256_new_basis(t, poly_to_tower_mt)
+    t = G256_inv1(t)
+    t = G256_new_basis(t, tower_to_poly_mt)
+    t = G256_new_basis(t, M)  # 仿射变换乘
+    return t ^ 0xd3
+
+
+def SM4_SBOX2(x):
     t = G256_new_basis(x, M)  # 仿射变换乘
     t ^= 0xd3
     t = G256_new_basis(t, poly_to_tower_mt)
@@ -83,11 +93,22 @@ def SM4_SBOX(x):
     return t ^ 0xd3
 
 
+def SM4_SBOX3(x):
+    # 仿射变换和同构矩阵统一为 AND 前的 18 * 8 放射矩阵
+    # t = G256_new_basis(x, M)  # 仿射变换乘
+    # t ^= 0xd3
+    # t = G256_new_basis(t, poly_to_tower_mt)
+    t = G256_inv3(x)
+    t = G256_new_basis(t, tower_to_poly_mt)
+    t = G256_new_basis(t, M)  # 仿射变换乘
+    return t ^ 0xd3
+
+
 if __name__ == '__main__':
     # check_sbox()
     sbox = []
     for i in range(256):
-        sbox.append(SM4_SBOX(i))  # 生成sbox
+        sbox.append(SM4_SBOX3(i))  # 生成sbox
 
     flag = True
     for i in range(256):

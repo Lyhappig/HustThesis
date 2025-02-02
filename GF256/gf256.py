@@ -337,51 +337,87 @@ Affine3 = GF2Matrix([
 def get_inv_input2(x: int):
     global alpha, sum_ab
 
-    input = GF2Matrix(get_bit_list(x))
-    input.T()
-    Mt = Affine3 * P2T * M
-    out = (Mt * input).matrix
+    # input = GF2Matrix(get_bit_list(x))
+    # input.T()
+    # Mt = Affine3 * P2T * M
+    # out = (Mt * input).matrix
+    # Affine3 * P2T * C: (8, 10, 14, 16, 19, 22) XOR 1
+    # p1, p2, p3, p4, p5, p6, p7, p8, p9 = out[0][0], out[1][0], out[2][0], out[3][0], out[4][0], out[5][0], out[6][0], \
+    #     out[7][0] ^ 1, out[8][0]
+    # p10, p11, p12, p13, p14, p15, p16, p17, p18 = out[9][0] ^ 1, out[10][0], out[11][0], out[12][0], out[13][0] ^ 1, out[14][0], \
+    #     out[15][0] ^ 1, out[16][0], out[17][0]
+    #
+    # p19,  p20 = out[18][0] ^ 1, out[19][0]
+    # s5, s6, s7, s8 = out[20][0], out[21][0] ^ 1, out[22][0], out[23][0]
 
-    # Affine2 * P2T * C: (8, 10, 14, 16, 19, 22) XOR 1
-    p1, p2, p3, p4, p5, p6, p7, p8, p9 = out[0][0], out[1][0], out[2][0], out[3][0], out[4][0], out[5][0], out[6][0], \
-        out[7][0] ^ 1, out[8][0]
-    p10, p11, p12, p13, p14, p15, p16, p17, p18 = out[9][0] ^ 1, out[10][0], out[11][0], out[12][0], out[13][0] ^ 1, out[14][0], \
-        out[15][0] ^ 1, out[16][0], out[17][0]
+    x0, x1, x2, x3 = get_bit(x, 7), get_bit(x, 6), get_bit(x, 5), get_bit(x, 4)
+    x4, x5, x6, x7 = get_bit(x, 3), get_bit(x, 2), get_bit(x, 1), get_bit(x, 0)
 
-    p19,  p20 = out[18][0] ^ 1, out[19][0]
-    s5, s6, s7, s8 = out[20][0], out[21][0] ^ 1, out[22][0], out[23][0]
+    p13 = x7
+    p15 = x2 ^ x6
+    p17 = x7 ^ p15
+    k1 = x0 ^ x3
+    p0 = p15 ^ k1
+    p11 = x5 ^ k1
+    p5 = p17 ^ p11
+    p16 = x6 ^ p0
+    p20 = p17 ^ p16
+    p6 = x4 ^ p20
+    p9 = x3 ^ p6
+    p3 = p15 ^ p9
+    p1 = p5 ^ p3
+    p7 = p11 ^ p9
+    p12 = p0 ^ p6
+    p14 = p16 ^ p12
+    p21 = p15 ^ p14
+    p19 = x1 ^ p21
+    p10 = p11 ^ p19
+    p2 = x6 ^ p10
+    p4 = p16 ^ p10
+    p8 = p14 ^ p2
+    p18 = p9 ^ p8
+    p22 = p21 ^ p18
+    p23 = p0 ^ p1
 
-    alpha = get_num([p19, p20, s6, s5], 1)
-    sum_ab = get_num([p9, p11, p15, p17], 1)
+    # Affine3 * P2T * C: (8, 10, 14, 16, 19, 22) XOR 1
+    p7 ^= 1
+    p9 ^= 1
+    p13 ^= 1
+    p15 ^= 1
+    p18 ^= 1
+    p21 ^= 1
 
-    q1 = p1 * p2
-    q2 = p3 * p4
-    q3 = p5 * p6
-    r1 = q1 ^ q3
-    r2 = q2 ^ q3
+    alpha = get_num([p18, p19, p21, p20], 1)
+    sum_ab = get_num([p8, p10, p14, p16], 1)
 
-    q4 = p7 * p8
-    q5 = p9 * p10
-    q6 = p11 * p12
-    r3 = q4 ^ q5
-    r4 = q4 ^ q6
+    q0 = p0 * p1
+    q1 = p2 * p3
+    q2 = p4 * p5
+    r0 = q0 ^ q2
+    r1 = q1 ^ q2
 
-    q7 = p13 * p14
-    q8 = p15 * p16
-    q9 = p17 * p18
-    r5 = q7 ^ q9
-    r6 = q8 ^ q9
+    q3 = p6 * p7
+    q4 = p8 * p9
+    q5 = p10 * p11
+    r2 = q3 ^ q4
+    r3 = q3 ^ q5
 
+    q6 = p12 * p13
+    q7 = p14 * p15
+    q8 = p16 * p17
+    r4 = q6 ^ q8
+    r5 = q7 ^ q8
+
+    s0 = r0 ^ r4
     s1 = r1 ^ r5
-    s2 = r2 ^ r6
+    s2 = r2 ^ r4
     s3 = r3 ^ r5
-    s4 = r4 ^ r6
 
-    t1 = s5 ^ s1
-    t2 = s6 ^ s2
-    t3 = s7 ^ s3
-    t4 = s8 ^ s4
-    return get_num([t1, t2, t3, t4], 1)
+    t0 = p20 ^ s0
+    t1 = p21 ^ s1
+    t2 = p22 ^ s2
+    t3 = p23 ^ s3
+    return get_num([t0, t1, t2, t3], 1)
 
 
 def G256_inv3(x: int):

@@ -254,16 +254,14 @@ Affine2 = GF2Matrix([
     [1, 1, 1, 1, 0, 0, 0, 0]
 ])
 
-alpha, sum = 0, 0
+alpha, sum_ab = 0, 0
 
-def get_inv_input(x: int):
-    global alpha, sum
-    '''
-    input: (x7, x6, x5, x4, x3, x2, x1, x0)
-    '''
+
+def get_inv_input1(x: int):
+    global alpha, sum_ab
+
     input = GF2Matrix(get_bit_list(x))
     input.T()
-    # Mt = Affine2
     Mt = Affine2 * P2T * M
     out = (Mt * input).matrix
 
@@ -275,14 +273,86 @@ def get_inv_input(x: int):
         out[15][0] ^ 1, out[16][0], out[17][0]
     s5, s6, s7, s8 = out[18][0], out[19][0] ^ 1, out[20][0], out[21][0]
 
-    # p1, p2, p3, p4, p5, p6, p7, p8, p9 = out[0][0], out[1][0], out[2][0], out[3][0], out[4][0], out[5][0], out[6][0], \
-    #     out[7][0], out[8][0]
-    # p10, p11, p12, p13, p14, p15, p16, p17, p18 = out[9][0], out[10][0], out[11][0], out[12][0], out[13][0], \
-    #     out[14][0], out[15][0], out[16][0], out[17][0]
-    # s5, s6, s7, s8 = out[18][0], out[19][0], out[20][0], out[21][0]
-
     alpha = get_num([s6 ^ s7, p11 ^ p12, s6, s5], 1)
-    sum = get_num([p9, p11, p15, p17], 1)
+    sum_ab = get_num([p9, p11, p15, p17], 1)
+
+    q1 = p1 * p2
+    q2 = p3 * p4
+    q3 = p5 * p6
+    r1 = q1 ^ q3
+    r2 = q2 ^ q3
+
+    q4 = p7 * p8
+    q5 = p9 * p10
+    q6 = p11 * p12
+    r3 = q4 ^ q5
+    r4 = q4 ^ q6
+
+    q7 = p13 * p14
+    q8 = p15 * p16
+    q9 = p17 * p18
+    r5 = q7 ^ q9
+    r6 = q8 ^ q9
+
+    s1 = r1 ^ r5
+    s2 = r2 ^ r6
+    s3 = r3 ^ r5
+    s4 = r4 ^ r6
+
+    t1 = s5 ^ s1
+    t2 = s6 ^ s2
+    t3 = s7 ^ s3
+    t4 = s8 ^ s4
+    return get_num([t1, t2, t3, t4], 1)
+
+
+Affine3 = GF2Matrix([
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1, 1, 1, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 1, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0, 1, 0, 1],
+    [1, 1, 0, 0, 1, 1, 0, 0],
+    [0, 0, 0, 0, 1, 1, 0, 0],
+    [1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 1, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 0, 1, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 1, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0],   # p19 = x7
+    [0, 1, 0, 0, 0, 0, 0, 0],   # p20 = x6
+    [0, 0, 0, 1, 0, 0, 0, 0],   # s1 = x4
+    [0, 0, 1, 0, 0, 0, 0, 0],   # s2 = x5
+    [1, 0, 1, 0, 0, 0, 0, 0],   # s3 = x7 + x5
+    [1, 1, 1, 1, 0, 0, 0, 0]    # s4 = x7 + x6 + x5 + x4
+])
+
+
+def get_inv_input2(x: int):
+    global alpha, sum_ab
+
+    input = GF2Matrix(get_bit_list(x))
+    input.T()
+    Mt = Affine3 * P2T * M
+    out = (Mt * input).matrix
+
+    # Affine2 * P2T * C: (8, 10, 14, 16, 19, 22) XOR 1
+    p1, p2, p3, p4, p5, p6, p7, p8, p9 = out[0][0], out[1][0], out[2][0], out[3][0], out[4][0], out[5][0], out[6][0], \
+        out[7][0] ^ 1, out[8][0]
+    p10, p11, p12, p13, p14, p15, p16, p17, p18 = out[9][0] ^ 1, out[10][0], out[11][0], out[12][0], out[13][0] ^ 1, out[14][0], \
+        out[15][0] ^ 1, out[16][0], out[17][0]
+
+    p19,  p20 = out[18][0] ^ 1, out[19][0]
+    s5, s6, s7, s8 = out[20][0], out[21][0] ^ 1, out[22][0], out[23][0]
+
+    alpha = get_num([p19, p20, s6, s5], 1)
+    sum_ab = get_num([p9, p11, p15, p17], 1)
 
     q1 = p1 * p2
     q2 = p3 * p4
@@ -318,8 +388,8 @@ def G256_inv3(x: int):
     '''
     GF(2^8)的求逆操作
     '''
-    global alpha, sum
-    inverse = G16_inv_box(get_inv_input(x))
+    global alpha, sum_ab
+    inverse = G16_inv_box(get_inv_input2(x))
     gamma1 = G16_mul(inverse, alpha)
-    gamma0 = G16_mul(inverse, sum)
+    gamma0 = G16_mul(inverse, sum_ab)
     return get_num([gamma1, gamma0], 4)

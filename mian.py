@@ -94,10 +94,7 @@ def SM4_SBOX2(x):
 
 
 def SM4_SBOX3(x):
-    # 仿射变换和同构矩阵统一为 AND 前的 18 * 8 放射矩阵
-    # t = G256_new_basis(x, M)  # 仿射变换乘
-    # t ^= 0xd3
-    # t = G256_new_basis(t, poly_to_tower_mt)
+    # 仿射变换和同构矩阵统一为 AND 前的 24 * 8 放射矩阵
     t = G256_inv3(x)
     t = G256_new_basis(t, tower_to_poly_mt)
     t = G256_new_basis(t, M)  # 仿射变换乘

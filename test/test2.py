@@ -132,7 +132,7 @@ def test3():
     ans.T()
     for i in range(len(ans.matrix[0])):
         if ans.matrix[0][i] != 0:
-            print(i + 1)
+            print(i)
 
 
 if __name__ == '__main__':

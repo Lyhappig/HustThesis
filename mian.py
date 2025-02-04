@@ -101,11 +101,15 @@ def SM4_SBOX3(x):
     return t ^ 0xd3
 
 
+def SM4_SBOX4(x):
+    return G256_inv4(x)
+
+
 if __name__ == '__main__':
     # check_sbox()
     sbox = []
     for i in range(256):
-        sbox.append(SM4_SBOX3(i))  # 生成sbox
+        sbox.append(SM4_SBOX4(i))  # 生成sbox
 
     flag = True
     for i in range(256):

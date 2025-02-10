@@ -323,7 +323,7 @@ Affine3 = GF2Matrix([
     [0, 0, 0, 0, 0, 0, 1, 1],   # p13 = x1 + x0
     [0, 0, 1, 0, 0, 0, 1, 0],   # p14 = x5 + x1
     [0, 0, 0, 0, 0, 0, 1, 0],   # p13 = x1
-    [0, 0, 0, 1, 0, 0, 0, 1],   # p16 = x4 + x0
+    [0, 0, 0, 1, 0, 0, 0, 1],   # p16 = x4 + x0gen
     [0, 0, 0, 0, 0, 0, 0, 1],   # p17 = x0
     # ---------------------------------------------------
     [1, 1, 1, 1, 0, 0, 0, 0],   # p18 = x7 + x6 + x5 + x4
@@ -718,7 +718,7 @@ def G256_inv4(x: int):
     '''
     global z0, z1, z2, z3
     T = get_inv_input2(x)
-    inverse = G16_inv_box(T)
+    inverse = G16_inv_box2(T)
     z0 = get_bit(inverse, 3)
     z1 = get_bit(inverse, 2)
     z2 = get_bit(inverse, 1)

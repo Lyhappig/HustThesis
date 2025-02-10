@@ -61,3 +61,41 @@ gf16_sbox = [0x0, 0x1, 0x3, 0x2, 0xf, 0xc, 0x9, 0xb, 0xa, 0x6, 0x8, 0x7, 0x5, 0x
 
 def G16_inv_box(alpha: int) -> int:
     return gf16_sbox[alpha]
+
+
+def G16_inv_box2(alpha: int) -> int:
+    x0, x1, x2, x3 = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
+    # Here
+    # 输入
+    r0 = x1 ^ x2
+    r1 = x0 ^ x1
+    r2 = x2 ^ x3
+    r3 = x0 ^ x2
+    r4 = r0 ^ r2
+    r5 = x3
+    q0 = x0
+    # 非线性部分
+    q1 = 1 ^ r0
+    t0 = q0 & q1
+    s0 = r0 ^ r5
+    q2 = s0 ^ t0
+    q3 = 1 ^ r1 ^ t0
+    t1 = q2 & q3
+    q4 = q3 ^ r2 ^ t1
+    q5 = r0 ^ t1
+    t2 = q4 & q5
+    s1 = r3 ^ t2
+    q6 = s1 ^ r5
+    q7 = s0 ^ t2
+    t3 = q6 & q7
+    q8 = s1 ^ t0 ^ t1
+    q9 = r1 ^ r5 ^ t1
+    t4 = q8 & q9
+    # 输出
+    t5 = t2 ^ t3
+    y0 = q2 ^ t5 ^ t4
+    y1 = r4 ^ t2 ^ t4
+    y2 = q4 ^ 1 ^ t3
+    y3 = q3 ^ 1 ^ t5
+
+    return get_num([y0, y1, y2, y3], 1)

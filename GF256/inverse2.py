@@ -8,6 +8,7 @@ p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 = [0] * 12
 p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26 = [0] * 15
 
 
+# 41 XOR, depth: 8
 def part1(x: int):
     global p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11
     global p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26
@@ -15,7 +16,7 @@ def part1(x: int):
     x0, x1, x2, x3 = get_bit(x, 7), get_bit(x, 6), get_bit(x, 5), get_bit(x, 4)
     x4, x5, x6, x7 = get_bit(x, 3), get_bit(x, 2), get_bit(x, 1), get_bit(x, 0)
 
-    p13 = x7 ^ 1
+    p13 = x7
     p15 = x2 ^ x6
     p17 = x7 ^ p15
     p19 = x0 ^ x5
@@ -28,40 +29,46 @@ def part1(x: int):
     p1 = p5 ^ p3
     p2 = p20 ^ p3
     p7 = x7 ^ p1
-    p6 = p19 ^ p7
-    p0 = p12 ^ p6
-    p9 = p15 ^ p3 ^ 1
+    p9 = p15 ^ p3
+    p6 = x3 ^ p9
     p10 = x6 ^ p2
-    p8 = p6 ^ p10
-    p14 = x6 ^ p6
     p18 = p19 ^ p22
+    p0 = p1 ^ p18
     p21 = x1 ^ p22
     p4 = p5 ^ p21
-    p16 = p10 ^ p4
-    p23 = x3 ^ p10 ^ 1
-    p24 = p11 ^ p10
-    p25 = x1 ^ p24 ^ 1
-    p26 = x4 ^ p6
+    w0 = x2 ^ x3
+    p8 = p20 ^ w0
+    p14 = p3 ^ w0
+    p16 = x0 ^ w0
+    p23 = p9 ^ p8
+    p25 = p15 ^ p14
+    p26 = p17 ^ p16
+    p24 = p21 ^ p26
 
     p7 ^= 1
+    p9 ^= 1
+    p13 ^= 1
     p15 ^= 1
     p19 ^= 1
     p22 ^= 1
+    p23 ^= 1
+    p25 ^= 1
 
     q0 = p0 * p1
     q1 = p2 * p3
     q2 = p4 * p5
+    r0 = q0 ^ q2
+    r1 = q1 ^ q2
+
     q3 = p6 * p7
     q4 = p8 * p9
     q5 = p10 * p11
+    r2 = q3 ^ q4
+    r3 = q3 ^ q5
+
     q6 = p12 * p13
     q7 = p14 * p15
     q8 = p16 * p17
-
-    r0 = q0 ^ q2
-    r1 = q1 ^ q2
-    r2 = q3 ^ q4
-    r3 = q3 ^ q5
     r4 = q6 ^ q8
     r5 = q7 ^ q8
 
@@ -78,6 +85,7 @@ def part1(x: int):
     return get_num([t0, t1, t2, t3], 1)
 
 
+# 25 XOR, depth: 12
 def part2(alpha: int) -> int:
     t0, t1, t2, t3 = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
     # Here
@@ -90,11 +98,11 @@ def part2(alpha: int) -> int:
     a5 = t3
     b0 = t0
     # 非线性部分
-    b1 = a0 ^ 1
+    b1 = 1 ^ a0
     c0 = b0 & b1
     d0 = a0 ^ a5
     b2 = d0 ^ c0
-    b3 = a1 ^ c0 ^ 1
+    b3 = 1 ^ a1 ^ c0
     c1 = b2 & b3
     b4 = b3 ^ a2 ^ c1
     b5 = a0 ^ c1
@@ -110,12 +118,13 @@ def part2(alpha: int) -> int:
     c5 = c2 ^ c3
     z0 = b2 ^ c5 ^ c4
     z1 = a4 ^ c2 ^ c4
-    z2 = b4 ^ c3 ^ 1
-    z3 = b3 ^ c5 ^ 1
+    z2 = b4 ^ 1 ^ c3
+    z3 = b3 ^ 1 ^ c5
 
     return get_num([z0, z1, z2, z3], 1)
 
 
+# 40 XOR, depth: 7
 def part3(gamma: int) -> int:
     z0, z1, z2, z3 = get_bit(gamma, 3), get_bit(gamma, 2), get_bit(gamma, 1), get_bit(gamma, 0)
     k0 = z0 ^ z2
@@ -143,43 +152,51 @@ def part3(gamma: int) -> int:
     u16 = p14 * z2
     u17 = p16 * z3
 
-    v0 = u9 ^ u12
-    v1 = u11 ^ u14
-    v2 = u16 ^ v0
-    v3 = v1 ^ v2
-    y0 = u15 ^ v3
-    v5 = u13 ^ u17
-    v6 = u12 ^ v3
-    y4 = v5 ^ v6
-    v8 = u5 ^ u6
-    v9 = u7 ^ v8
-    v10 = u4 ^ v9
-    y6 = y4 ^ v10 ^ 1
-    v12 = u10 ^ v2
-    v13 = v5 ^ v12
-    y3 = v10 ^ v13
-    v15 = u0 ^ u3
-    v16 = v9 ^ v15
-    v17 = u2 ^ v16
-    v18 = y3 ^ v17
-    y7 = y0 ^ v18 ^ 1
-    v20 = u13 ^ v0
-    v21 = u11 ^ v20
-    y5 = v17 ^ v21
-    v23 = v13 ^ v16
-    v24 = u1 ^ v23
-    v25 = u8 ^ v24
-    y2 = u7 ^ v25
-    v27 = y5 ^ v24
-    v28 = y0 ^ v27
-    v29 = u5 ^ v28
-    y1 = u3 ^ v29 ^ 1
+    v0 = u9 ^ u16
+    v1 = u13 ^ u17
+    v2 = u11 ^ u14
+    v3 = v0 ^ v1
+    y4 = v2 ^ v3
+    v4 = u5 ^ u6
+    v5 = u7 ^ v4
+    v6 = u10 ^ u12
+    v7 = u0 ^ u3
+    v8 = u4 ^ v5
+    y6 = y4 ^ v8
+    v9 = v3 ^ v6
+    y3 = v8 ^ v9
+    v10 = u15 ^ v0
+    v11 = u2 ^ v5
+    v12 = u1 ^ v9
+    v13 = u9 ^ u13
+    v14 = u12 ^ v2
+    y0 = v10 ^ v14
+    v15 = u14 ^ v13
+    v16 = u8 ^ v4
+    v17 = v7 ^ v16
+    y2 = v12 ^ v17
+    v18 = v7 ^ v11
+    v19 = v14 ^ v15
+    y5 = v18 ^ v19
+    v20 = u2 ^ u4
+    v21 = v7 ^ v9
+    v22 = y0 ^ v20
+    y7 = v21 ^ v22
+    v23 = u2 ^ u3
+    v24 = u5 ^ v10
+    v25 = v15 ^ v23
+    v26 = v24 ^ v25
+    y1 = v12 ^ v26
+
     y0 ^= 1
+    y1 ^= 1
     y3 ^= 1
+    y6 ^= 1
+    y7 ^= 1
 
     return get_num([y0, y1, y2, y3, y4, y5, y6, y7], 1)
 
 
 
-def GF256_inverse1(x: int) -> int:
+def GF256_inverse2(x: int) -> int:
     return part3(part2(part1(x)))

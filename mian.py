@@ -1,6 +1,8 @@
 from utils.check_sbox import check_sbox
 from GF256.gf256 import *
 from GF256.inverse1 import *
+from GF256.inverse2 import *
+from GF256.inverse3 import *
 
 sm4_sbox = [
     0xD6, 0x90, 0xE9, 0xFE, 0xCC, 0xE1, 0x3D, 0xB7, 0x16, 0xB6, 0x14, 0xC2, 0x28, 0xFB, 0x2C, 0x05,
@@ -105,15 +107,24 @@ def SM4_SBOX3(x):
 def SM4_SBOX4(x):
     return G256_inv4(x)
 
+
 def SM4_SBOX5(x):
-    return GF256_inverse(x)
+    return GF256_inverse1(x)
+
+
+def SM4_SBOX6(x):
+    return GF256_inverse2(x)
+
+
+def SM4_SBOX7(x):
+    return GF256_inverse3(x)
 
 
 if __name__ == '__main__':
     # check_sbox()
     sbox = []
     for i in range(256):
-        sbox.append(SM4_SBOX5(i))  # 生成sbox
+        sbox.append(SM4_SBOX7(i))  # 生成sbox
 
     flag = True
     for i in range(256):

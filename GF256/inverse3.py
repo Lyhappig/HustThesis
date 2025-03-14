@@ -42,11 +42,10 @@ def part1(x: int):
     p24 = p11 ^ p10
     p25 = x1 ^ p24 ^ 1
     p26 = x4 ^ p6
-
-    p7 ^= 1
-    p15 ^= 1
-    p19 ^= 1
-    p22 ^= 1
+    p7 = p7 ^ 1
+    p15 = p15 ^ 1
+    p19 = p19 ^ 1
+    p22 = p22 ^ 1
 
     q0 = p0 * p1
     q1 = p2 * p3
@@ -80,39 +79,31 @@ def part1(x: int):
 
 def part2(alpha: int) -> int:
     t0, t1, t2, t3 = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
-    # Here
-    # 输入
-    a0 = t1 ^ t2
-    a1 = t0 ^ t1
-    a2 = t2 ^ t3
-    a3 = t0 ^ t2
-    a4 = t1 ^ t3
-    a5 = t3
-    b0 = t0
-    # 非线性部分
-    b1 = a0 ^ 1
-    c0 = b0 & b1
-    d0 = a0 ^ a5
-    b2 = d0 ^ c0
-    b3 = a1 ^ c0 ^ 1
-    c1 = b2 & b3
-    b4 = b3 ^ a2 ^ c1
-    b5 = a0 ^ c1
-    c2 = b4 & b5
-    d1 = a3 ^ c2
-    b6 = d1 ^ a5
-    b7 = d0 ^ c2
-    c3 = b6 & b7
-    b8 = d1 ^ c0 ^ c1
-    b9 = a1 ^ a5 ^ c1
-    c4 = b8 & b9
-    # 输出
-    c5 = c2 ^ c3
-    z0 = b2 ^ c5 ^ c4
-    z1 = a4 ^ c2 ^ c4
-    z2 = b4 ^ c3 ^ 1
-    z3 = b3 ^ c5 ^ 1
-
+    f0 = t0
+    f1 = t2
+    f2 = t3
+    f3 = t1
+    g0 = f3 & f1
+    f2 = g0 ^ f2
+    g1 = f2 & f0
+    f3 = g1 ^ f3
+    f0 = f3 ^ f0
+    f2 = f1 ^ f2
+    f3 = f2 ^ f3
+    g2 = f0 & f1
+    g2 = g2 & f3
+    f2 = g2 ^ f2
+    g3 = f3 & f2
+    f1 = g3 ^ f1
+    g4 = f1 & f0
+    f3 = g4 ^ f3
+    f1 = f2 ^ f1
+    f2 = f3 ^ f2
+    f1 = f0 ^ f1
+    z0 = f0
+    z1 = f2
+    z2 = f1
+    z3 = f3
     return get_num([z0, z1, z2, z3], 1)
 
 
@@ -174,12 +165,12 @@ def part3(gamma: int) -> int:
     v28 = y0 ^ v27
     v29 = u5 ^ v28
     y1 = u3 ^ v29 ^ 1
-    y0 ^= 1
-    y3 ^= 1
+    y0 = y0 ^ 1
+    y3 = y3 ^ 1
 
     return get_num([y0, y1, y2, y3, y4, y5, y6, y7], 1)
 
 
 
-def GF256_inverse1(x: int) -> int:
+def GF256_inverse3(x: int) -> int:
     return part3(part2(part1(x)))

@@ -7,7 +7,6 @@ from utils.matrix import GF2Matrix
 
 # 定义 SM4 不可约多项式 x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
 irreducible_poly = galois.Poly.Degrees([8, 7, 6, 5, 4, 2, 0])
-# irreducible_poly = galois.Poly.Degrees([8, 4, 3, 1, 0])
 
 # 定义伽罗瓦域 GF(2^8)
 GF_256 = galois.GF(2 ** 8, irreducible_poly=irreducible_poly, repr='poly')
@@ -55,14 +54,6 @@ def matrix_to_ls(matrix):
 
 
 def get_mt(W, Z, Y):
-    # print("\"" + to_8bit_bin(W * Z * Y) + "\",")
-    # print("\"" + to_8bit_bin(Z * Y) + "\",")
-    # print("\"" + to_8bit_bin(W * Y) + "\",")
-    # print("\"" + to_8bit_bin(Y) + "\",")
-    # print("\"" + to_8bit_bin(W * Z) + "\",")
-    # print("\"" + to_8bit_bin(Z) + "\",")
-    # print("\"" + to_8bit_bin(W) + "\",")
-    # print("\"" + to_8bit_bin(1) + "\",")
     matrix = [
         to_8bit_bin(W * Z * Y),
         to_8bit_bin(Z * Y),
@@ -75,7 +66,6 @@ def get_mt(W, Z, Y):
     ]
     X = GF2Matrix([[int(bit) for bit in row] for row in matrix])
     # X.T()
-
     print("tower_to_poly = ", end='')
     print_matrix(X.matrix)
     X_inv = X.inverse()

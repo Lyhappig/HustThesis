@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit import QuantumCircuit, QuantumRegister
 
 
 def output_affine():
@@ -65,6 +65,28 @@ def output_affine():
     print(qc.depth())
     qc.draw(output="mpl")
     plt.show()
+
+
+def qt12():
+    y = QuantumRegister(8, 'y')
+    qc = QuantumCircuit(y)
+
+    qc.cx(y[0], y[1])
+    qc.cx(y[1], y[3])
+    qc.cx(y[4], y[6])
+    qc.cx(y[6], y[0])
+    qc.cx(y[0], y[5])
+    qc.cx(y[3], y[0])
+    qc.cx(y[5], y[7])
+    qc.cx(y[7], y[0])
+    qc.cx(y[2], y[5])
+    qc.cx(y[3], y[2])
+    qc.cx(y[5], y[1])
+    qc.cx(y[4], y[3])
+    qc.cx(y[7], y[4])
+    qc.cx(y[6], y[2])
+
+    print(qc.depth())
 
 
 if __name__ == '__main__':

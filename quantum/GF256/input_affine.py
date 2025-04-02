@@ -46,17 +46,17 @@ def input_affine():
 
     qc.swap(b[0], b[5])
 
-    # y[7] = y[7] ^ 1
-    qc.x(b[7])
+    # y[0] = y[0] ^ 1
+    qc.x(b[0])
 
-    # y[5] = y[5] ^ 1
-    qc.x(b[5])
+    # y[2] = y[2] ^ 1
+    qc.x(b[2])
 
-    # y[3] = y[3] ^ 1
-    qc.x(b[3])
+    # y[4] = y[4] ^ 1
+    qc.x(b[4])
 
-    # y[1] = y[1] ^ 1
-    qc.x(b[1])
+    # y[6] = y[6] ^ 1
+    qc.x(b[6])
 
     print(qc.depth())
     qc.draw(output="mpl")

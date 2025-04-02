@@ -8,20 +8,13 @@ def gf16_n_square():
 
     qc = QuantumCircuit(a, c)
 
-    # a2 = a0 + a2
-    qc.cx(a[0], a[2])
-
-    # a3 = a1 + a3
-    qc.cx(a[1], a[3])
-
-    # a2 = a3 + a2 = a3 + a2 + a1 + a0
-    qc.cx(a[3], a[2])
-
-    # swap(a1, a3)
-    qc.swap(a[1], a[3])
-
-    # swap(a0, a2)
+    qc.cx(a[2], a[0])
+    qc.cx(a[3], a[1])
+    qc.cx(a[0], a[1])
+    qc.swap(a[2], a[3])
     qc.swap(a[0], a[2])
+    qc.swap(a[1], a[3])
+    # [a3, a2, a0 + a2, a0 + a2 + a3 + a1]
 
     print(qc.depth())
     qc.draw(output="mpl")

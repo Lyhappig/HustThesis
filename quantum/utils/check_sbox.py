@@ -1,3 +1,6 @@
+target_sbox = [0x0, 0x1, 0x3, 0x2, 0xf, 0xc, 0x9, 0xb, 0xa, 0x6, 0x8, 0x7, 0x5, 0xe, 0xd, 0x4]
+
+
 def get_bit(x, i):
     return (x >> i) & 1
 
@@ -282,23 +285,39 @@ d = [0] * 15
 def sbox4(alpha: int):
     global a, d
     # t0, t1, t2, t3 = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
-    a[3], a[2], a[1], a[0] = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
-    # d[0] = cx([a[3], a[2], a[1], a[0]], d[0])
-    # d[1] = cx([a[1], a[0]], d[1])
-    # d[2] = cx([a[3], a[1]], d[2])
-    # d[3] = cx([a[2], a[0]], d[3])
+    a[0], a[1], a[2], a[3] = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
+
+    def cx(x, y):
+        return x ^ y
+
+    # d[1] = cx([a[1]], d[1])
+    # d[1] = cx([a[0]], d[1])
+    # d[2] = cx([a[3]], d[2])
+    # d[2] = cx([a[1]], d[2])
+    # d[3] = cx([a[2]], d[3])
+    # d[3] = cx([a[0]], d[3])
+    # d[0] = cx([d[2]], d[0])
+    # d[0] = cx([d[3]], d[0])
     # d[4] = ccx(d[0], d[1], d[4])
     # d[5] = ccx(d[2], a[1], d[5])
     # d[6] = ccx(d[3], a[0], d[6])
-    # d[6] = cx([d[4], a[2]], d[6])
-    # d[5] = cx([d[4], a[2], a[3]], d[5])
-    # d[2] = cx([a[3], a[1], d[6]], d[2])
-    # d[3] = cx([a[2], a[0], d[5]], d[3])
+    # d[6] = cx([d[4]], d[6])
+    # d[6] = cx([a[2]], d[6])
+    # d[5] = cx([d[4]], d[5])
+    # d[5] = cx([a[2]], d[5])
+    # d[5] = cx([a[3]], d[5])
+    # d[2] = cx([a[3]], d[2])
+    # d[2] = cx([a[1]], d[2])
+    # d[2] = cx([d[6]], d[2])
+    # d[3] = cx([a[2]], d[3])
+    # d[3] = cx([a[0]], d[3])
+    # d[3] = cx([d[5]], d[3])
     # d[1] = cx([d[0]], d[1])
     # a[1] = cx([a[3]], a[1])
     # a[0] = cx([a[2]], a[0])
-    # d[7] = cx([d[6], d[5]], d[7])
-    # d[8] = cx([d[6], d[5]], d[8])
+    # d[7] = cx([d[6]], d[7])
+    # d[7] = cx([d[5]], d[7])
+    # d[8] = cx([d[7]], d[8])
     # d[9] = ccx(d[7], d[1], d[9])
     # d[10] = ccx(d[6], a[3], d[10])
     # d[11] = ccx(d[5], a[2], d[11])
@@ -309,104 +328,338 @@ def sbox4(alpha: int):
     # d[10] = cx([d[11]], d[10])
     # d[12] = cx([d[14]], d[12])
     # d[13] = cx([d[14]], d[13])
-    # d[0] = cx([a[3], a[2], a[1], a[0]], d[0])
-    d[1] = cx([a[1]], d[1])
-    d[1] = cx([a[0]], d[1])
-    d[2] = cx([a[3]], d[2])
-    d[2] = cx([a[1]], d[2])
-    d[3] = cx([a[2]], d[3])
-    d[3] = cx([a[0]], d[3])
-    d[0] = cx([d[2]], d[0])
-    d[0] = cx([d[3]], d[0])
-    d[4] = ccx(d[0], d[1], d[4])
-    d[5] = ccx(d[2], a[1], d[5])
-    d[6] = ccx(d[3], a[0], d[6])
-    d[6] = cx([d[4]], d[6])
-    d[6] = cx([a[2]], d[6])
-    d[5] = cx([d[4]], d[5])
-    d[5] = cx([a[2]], d[5])
-    d[5] = cx([a[3]], d[5])
-    d[2] = cx([a[3]], d[2])
-    d[2] = cx([a[1]], d[2])
-    d[2] = cx([d[6]], d[2])
-    d[3] = cx([a[2]], d[3])
-    d[3] = cx([a[0]], d[3])
-    d[3] = cx([d[5]], d[3])
-    d[1] = cx([d[0]], d[1])
-    a[1] = cx([a[3]], a[1])
-    a[0] = cx([a[2]], a[0])
-    d[7] = cx([d[6]], d[7])
-    d[7] = cx([d[5]], d[7])
-    d[8] = cx([d[7]], d[8])
-    d[9] = ccx(d[7], d[1], d[9])
-    d[10] = ccx(d[6], a[3], d[10])
-    d[11] = ccx(d[5], a[2], d[11])
-    d[12] = ccx(d[8], d[0], d[12])
-    d[13] = ccx(d[2], a[1], d[13])
-    d[14] = ccx(d[3], a[0], d[14])
-    d[9] = cx([d[11]], d[9])
-    d[10] = cx([d[11]], d[10])
-    d[12] = cx([d[14]], d[12])
-    d[13] = cx([d[14]], d[13])
-
+    # d[13], d[0] = d[0], d[13]
+    # d[12], d[1] = d[1], d[12]
+    # d[10], d[2] = d[2], d[10]
+    # d[9], d[3] = d[3], d[9]
+    '''
+    '''
+    d[2] = cx(a[2], d[2])
+    d[2] = cx(a[3], d[2])
+    d[1] = cx(a[0], d[1])
+    d[1] = cx(a[2], d[1])
+    d[0] = cx(a[1], d[0])
+    d[0] = cx(a[3], d[0])
+    d[3] = cx(d[1], d[3])
+    d[3] = cx(d[0], d[3])
+    d[4] = ccx(d[3], d[2], d[4])
+    d[5] = ccx(d[1], a[2], d[5])
+    d[6] = ccx(d[0], a[3], d[6])
+    d[6] = cx(d[4], d[6])
+    d[6] = cx(a[1], d[6])
+    d[5] = cx(d[4], d[5])
+    d[5] = cx(a[1], d[5])
+    d[5] = cx(a[0], d[5])
+    d[1] = cx(a[0], d[1])
+    d[1] = cx(a[2], d[1])
+    d[1] = cx(d[6], d[1])
+    d[0] = cx(a[1], d[0])
+    d[0] = cx(a[3], d[0])
+    d[0] = cx(d[5], d[0])
+    d[2] = cx(d[3], d[2])
+    a[2] = cx(a[0], a[2])
+    a[3] = cx(a[1], a[3])
+    d[7] = cx(d[6], d[7])
+    d[7] = cx(d[5], d[7])
+    d[8] = cx(d[7], d[8])
+    d[9] = ccx(d[7], d[2], d[9])
+    d[10] = ccx(d[6], a[0], d[10])
+    d[11] = ccx(d[5], a[1], d[11])
+    d[12] = ccx(d[8], d[3], d[12])
+    d[13] = ccx(d[1], a[2], d[13])
+    d[14] = ccx(d[0], a[3], d[14])
+    d[9] = cx(d[11], d[9])
+    d[10] = cx(d[11], d[10])
+    d[12] = cx(d[14], d[12])
+    d[13] = cx(d[14], d[13])
+    d[13], a[3] = a[3], d[13]
+    d[12], a[2] = a[2], d[12]
+    d[10], a[1] = a[1], d[10]
+    d[9], a[0] = a[0], d[9]
 
 
 def sbox4_inv():
     global a, d
-    d[13] = cx([d[14]], d[13])
-    d[12] = cx([d[14]], d[12])
-    d[10] = cx([d[11]], d[10])
-    d[9] = cx([d[11]], d[9])
-    d[14] = ccx(d[3], a[0], d[14])
-    d[13] = ccx(d[2], a[1], d[13])
-    d[12] = ccx(d[8], d[0], d[12])
-    d[11] = ccx(d[5], a[2], d[11])
-    d[10] = ccx(d[6], a[3], d[10])
-    d[9] = ccx(d[7], d[1], d[9])
-    d[8] = cx([d[6], d[5]], d[8])
-    d[7] = cx([d[6], d[5]], d[7])
-    a[0] = cx([a[2]], a[0])
-    a[1] = cx([a[3]], a[1])
-    d[1] = cx([d[0]], d[1])
-    d[3] = cx([a[2], a[0], d[5]], d[3])
-    d[2] = cx([a[3], a[1], d[6]], d[2])
-    d[5] = cx([d[4], a[2], a[3]], d[5])
-    d[6] = cx([d[4], a[2]], d[6])
-    d[6] = ccx(d[3], a[0], d[6])
-    d[5] = ccx(d[2], a[1], d[5])
-    d[4] = ccx(d[0], d[1], d[4])
-    d[3] = cx([a[2], a[0]], d[3])
-    d[2] = cx([a[3], a[1]], d[2])
-    d[1] = cx([a[1], a[0]], d[1])
-    d[0] = cx([a[3], a[2], a[1], a[0]], d[0])
+
+    def cx(x, y):
+        return x ^ y
+
+    # d[9], d[3] = d[3], d[9]
+    # d[10], d[2] = d[2], d[10]
+    # d[12], d[1] = d[1], d[12]
+    # d[13], d[0] = d[0], d[13]
+    # d[13] = cx([d[14]], d[13])
+    # d[12] = cx([d[14]], d[12])
+    # d[10] = cx([d[11]], d[10])
+    # d[9] = cx([d[11]], d[9])
+    # d[14] = ccx(d[3], a[0], d[14])
+    # d[13] = ccx(d[2], a[1], d[13])
+    # d[12] = ccx(d[8], d[0], d[12])
+    # d[11] = ccx(d[5], a[2], d[11])
+    # d[10] = ccx(d[6], a[3], d[10])
+    # d[9] = ccx(d[7], d[1], d[9])
+    # d[8] = cx([d[7]], d[8])
+    # d[7] = cx([d[5]], d[7])
+    # d[7] = cx([d[6]], d[7])
+    # a[0] = cx([a[2]], a[0])
+    # a[1] = cx([a[3]], a[1])
+    # d[1] = cx([d[0]], d[1])
+    # d[3] = cx([d[5]], d[3])
+    # d[3] = cx([a[0]], d[3])
+    # d[3] = cx([a[2]], d[3])
+    # d[2] = cx([d[6]], d[2])
+    # d[2] = cx([a[1]], d[2])
+    # d[2] = cx([a[3]], d[2])
+    # d[5] = cx([a[3]], d[5])
+    # d[5] = cx([a[2]], d[5])
+    # d[5] = cx([d[4]], d[5])
+    # d[6] = cx([a[2]], d[6])
+    # d[6] = cx([d[4]], d[6])
+    # d[6] = ccx(d[3], a[0], d[6])
+    # d[5] = ccx(d[2], a[1], d[5])
+    # d[4] = ccx(d[0], d[1], d[4])
+    # d[0] = cx([d[3]], d[0])
+    # d[0] = cx([d[2]], d[0])
+    # d[3] = cx([a[0]], d[3])
+    # d[3] = cx([a[2]], d[3])
+    # d[2] = cx([a[1]], d[2])
+    # d[2] = cx([a[3]], d[2])
+    # d[1] = cx([a[0]], d[1])
+    # d[1] = cx([a[1]], d[1])
+    '''
+    '''
+    d[9], a[0] = a[0], d[9]
+    d[10], a[1] = a[1], d[10]
+    d[12], a[2] = a[2], d[12]
+    d[13], a[3] = a[3], d[13]
+    d[13] = cx(d[14], d[13])
+    d[12] = cx(d[14], d[12])
+    d[10] = cx(d[11], d[10])
+    d[9] = cx(d[11], d[9])
+    d[14] = ccx(d[0], a[3], d[14])
+    d[13] = ccx(d[1], a[2], d[13])
+    d[12] = ccx(d[8], d[3], d[12])
+    d[11] = ccx(d[5], a[1], d[11])
+    d[10] = ccx(d[6], a[0], d[10])
+    d[9] = ccx(d[7], d[2], d[9])
+    d[8] = cx(d[7], d[8])
+    d[7] = cx(d[5], d[7])
+    d[7] = cx(d[6], d[7])
+    a[3] = cx(a[1], a[3])
+    a[2] = cx(a[0], a[2])
+    d[2] = cx(d[3], d[2])
+    d[0] = cx(d[5], d[0])
+    d[0] = cx(a[3], d[0])
+    d[0] = cx(a[1], d[0])
+    d[1] = cx(d[6], d[1])
+    d[1] = cx(a[2], d[1])
+    d[1] = cx(a[0], d[1])
+    d[5] = cx(a[0], d[5])
+    d[5] = cx(a[1], d[5])
+    d[5] = cx(d[4], d[5])
+    d[6] = cx(a[1], d[6])
+    d[6] = cx(d[4], d[6])
+    d[6] = ccx(d[0], a[3], d[6])
+    d[5] = ccx(d[1], a[2], d[5])
+    d[4] = ccx(d[3], d[2], d[4])
+    d[3] = cx(d[0], d[3])
+    d[3] = cx(d[1], d[3])
+    d[0] = cx(a[3], d[0])
+    d[0] = cx(a[1], d[0])
+    d[1] = cx(a[2], d[1])
+    d[1] = cx(a[0], d[1])
+    d[2] = cx(a[3], d[2])
+    d[2] = cx(a[2], d[2])
 
 
-if __name__ == '__main__':
-    # for i in range(16):
-    #     y1 = sbox1(i)
-    #     c0 = c1 = c2 = c3 = c4 = 0
-    #     sbox3(i)
-    #     y2 = get_num([c0, c4, c1, c2], 1)
-    #     sbox2_inv()
-    #     j = get_num([t0, t1, t2, t3], 1)
-    #     k = get_num([c0, c1, c2, c3, c4], 1)
-    #     if y1 != y2 or i != j or k != 0:
-    #         print("error")
-    #         exit(-1)
-    # print("OK")
+def cx1(a, b):
+    return a ^ b
+
+
+'''
+DORCIS 得到的不需要辅助量子比特，8 个 Toffoli 门的电路
+'''
+def sbox5(alpha):
+    global a, d
+    a[0], a[1], a[2], a[3] = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
+    a[1], a[2] = a[2], a[1]
+    a[2], a[3] = a[3], a[2]
+    a[2] = ccx(a[3], a[1], a[2])
+    a[3] = ccx(a[2], a[0], a[3])
+    a[2] = cx1(a[1], a[2])
+    a[0] = cx1(a[3], a[0])
+    a[3] = cx1(a[2], a[3])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    a[1] = ccx(a[3], a[2], a[1])
+    a[3] = ccx(a[1], a[0], a[3])
+    a[1] = cx1(a[2], a[1])
+    a[2] = cx1(a[3], a[2])
+    a[1] = cx1(a[0], a[1])
+    a[1], a[2] = a[2], a[1]
+
+
+def sbox5_inv():
+    global a, d
+    a[1], a[2] = a[2], a[1]
+    a[2], a[3] = a[3], a[2]
+    a[2] = ccx(a[3], a[1], a[2])
+    a[3] = ccx(a[2], a[0], a[3])
+    a[2] = cx1(a[1], a[2])
+    a[0] = cx1(a[3], a[0])
+    a[3] = cx1(a[2], a[3])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    a[1] = ccx(a[3], a[2], a[1])
+    a[3] = ccx(a[1], a[0], a[3])
+    a[1] = cx1(a[2], a[1])
+    a[2] = cx1(a[3], a[2])
+    a[1] = cx1(a[0], a[1])
+    a[1], a[2] = a[2], a[1]
+
+
+'''
+DORCIS 得到的需要 1 个辅助量子比特，7 个 Toffoli 门的电路
+'''
+def sbox6(alpha):
+    global a, d
+    a[0], a[1], a[2], a[3] = get_bit(alpha, 3), get_bit(alpha, 2), get_bit(alpha, 1), get_bit(alpha, 0)
+    a[1], a[2] = a[2], a[1]
+    a[2], a[3] = a[3], a[2]
+    a[2] = ccx(a[3], a[1], a[2])
+    a[3] = ccx(a[2], a[0], a[3])
+    a[2] = cx1(a[1], a[2])
+    a[0] = cx1(a[3], a[0])
+    a[3] = cx1(a[2], a[3])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[1] = ccx(a[3], a[2], a[1])
+    a[3] = ccx(a[1], a[0], a[3])
+    a[1] = cx1(a[2], a[1])
+    a[2] = cx1(a[3], a[2])
+    a[1] = cx1(a[0], a[1])
+    a[1], a[2] = a[2], a[1]
+
+
+def sbox6_inv():
+    global a, d
+    a[1], a[2] = a[2], a[1]
+    a[2], a[3] = a[3], a[2]
+    a[2] = ccx(a[3], a[1], a[2])
+    a[3] = ccx(a[2], a[0], a[3])
+    a[2] = cx1(a[1], a[2])
+    a[0] = cx1(a[3], a[0])
+    a[3] = cx1(a[2], a[3])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[2] = ccx(a[3], d[0], a[2])
+    d[0] = ccx(a[0], a[1], d[0])
+    a[1] = ccx(a[3], a[2], a[1])
+    a[3] = ccx(a[1], a[0], a[3])
+    a[1] = cx1(a[2], a[1])
+    a[2] = cx1(a[3], a[2])
+    a[1] = cx1(a[0], a[1])
+    a[1], a[2] = a[2], a[1]
+
+
+def check_sbox3():
+    for i in range(16):
+        y1 = sbox1(i)
+        c0 = c1 = c2 = c3 = c4 = 0
+        sbox3(i)
+        y2 = get_num([c0, c4, c1, c2], 1)
+        sbox2_inv()
+        j = get_num([t0, t1, t2, t3], 1)
+        k = get_num([c0, c1, c2, c3, c4], 1)
+        if y1 != y2 or i != j or k != 0:
+            print("error")
+            exit(-1)
+    print("OK")
+
+
+def check_sbox4():
     for i in range(16):
         y1 = sbox1(i)
         for j in range(15):
             d[j] = 0
         sbox4(i)
-        y2 = get_num([d[9], d[10], d[12], d[13]], 1)
+        # y2 = get_num([d[9], d[10], d[12], d[13]], 1)
+        y2 = get_num([a[0], a[1], a[2], a[3]], 1)
         sbox4_inv()
-        k = get_num([a[3], a[2], a[1], a[0]], 1)
+        k = get_num([a[0], a[1], a[2], a[3]], 1)
         for j in range(15):
             if d[j] != 0:
-                print("error")
+                print("sbox4_inv can't recover auxiliary qubit")
                 exit(-1)
-        if y1 != y2 or i != k:
-            print("error")
+        if i != k:
+            print("check_sbox4: can't recover input")
+            exit(-1)
+        if y1 != y2:
+            print("check_sbox4: answer not match")
             exit(-1)
     print("OK")
+
+
+def check_sbox5():
+    for i in range(16):
+        y1 = sbox1(i)
+        qbit = 1
+        d[0] = qbit
+        sbox5(i)
+        y2 = get_num([a[0], a[1], a[2], a[3]], 1)
+        if d[0] != qbit:
+            print("check_sbox5: sbox5 can't recover auxiliary qubit")
+            exit(-1)
+        sbox5_inv()
+        k = get_num([a[0], a[1], a[2], a[3]], 1)
+        if d[0] != qbit:
+            print("check_sbox5: sbox5_inv can't recover auxiliary qubit")
+            exit(-1)
+        if i != k:
+            print("check_sbox5: can't recover input")
+            exit(-1)
+        if y1 != y2:
+            print("check_sbox5: answer not match")
+            exit(-1)
+    print("OK")
+
+
+def check_sbox6():
+    for i in range(16):
+        y1 = sbox1(i)
+        qbit = 0
+        d[0] = qbit
+        sbox6(i)
+        y2 = get_num([a[0], a[1], a[2], a[3]], 1)
+        if d[0] != qbit:
+            print("check_sbox6: sbox6 can't recover auxiliary qubit")
+            exit(-1)
+        sbox6_inv()
+        k = get_num([a[0], a[1], a[2], a[3]], 1)
+        if d[0] != qbit:
+            print("check_sbox6: sbox6_inv can't recover auxiliary qubit")
+            exit(-1)
+        if i != k:
+            print("check_sbox6: can't recover input")
+            exit(-1)
+        if y1 != y2:
+            print("check_sbox6: answer not match")
+            exit(-1)
+    print("OK")
+
+
+if __name__ == '__main__':
+    # for i in range(16):
+    #     print(target_sbox[i], sbox1(i))
+    # check_sbox3()
+    check_sbox4()
+    # check_sbox5()
+    # check_sbox6()
+
+
+
+

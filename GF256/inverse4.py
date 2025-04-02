@@ -5,7 +5,6 @@ from utils.util import *
 from utils.matrix import *
 
 
-x = [0] * 8
 p = [0] * 27
 q = [0] * 9
 r = [0] * 6
@@ -14,37 +13,38 @@ z = [0] * 4
 k = [0] * 5
 u = [0] * 18
 v = [0] * 30
-y = [0] * 8
 
 
-def NOT(x):
-    return x ^ 1
+def NOT(a):
+    return a ^ 1
 
 
-def CNOT(x, y):
-    return x ^ y
+def CNOT(a, b):
+    return a ^ b
 
 
-def QAND(x, y, z, t):
-    if z != 0 or t != 0:
-        print("error")
-    return z ^ (x & y)
+def QAND(a, b, e, d):
+    if e != 0 or d != 0:
+        print("QAND error", e, d)
+    return e ^ (a & b)
 
 
-def QAND_1(x, y, z):
-    if z != (x & y):
-        print("error")
-    return z ^ (x & y)
+def QAND_1(a, b, d):
+    if d != (a & b):
+        print("QAND_1 error")
+    return d ^ (a & b)
 
 
 # GF256_inverse1 整理为Clifford+T量子电路
 def GF256_inverse4(number: int) -> int:
-    global x, p, q, r, c, z, k, u, v, y
+    global p, q, r, c, z, k, u, v
 
-    # part1
+    x = [0] * 8
+    y = [0] * 8
     x[0], x[1], x[2], x[3] = get_bit(number, 7), get_bit(number, 6), get_bit(number, 5), get_bit(number, 4)
     x[4], x[5], x[6], x[7] = get_bit(number, 3), get_bit(number, 2), get_bit(number, 1), get_bit(number, 0)
 
+    # part1
     p[13] = CNOT(x[7], p[13])
     p[13] = NOT(p[13])
     p[15] = CNOT(x[2], p[15])
@@ -106,6 +106,7 @@ def GF256_inverse4(number: int) -> int:
     p[15] = NOT(p[15])
     p[19] = NOT(p[19])
     p[22] = NOT(p[22])
+
     q[0] = QAND(p[0], p[1], q[0], u[0])
     q[1] = QAND(p[2], p[3], q[1], u[1])
     q[2] = QAND(p[4], p[5], q[2], u[2])
@@ -115,6 +116,8 @@ def GF256_inverse4(number: int) -> int:
     q[6] = QAND(p[12], p[13], q[6], u[6])
     q[7] = QAND(p[14], p[15], q[7], u[7])
     q[8] = QAND(p[16], p[17], q[8], u[8])
+
+
     r[0] = CNOT(q[0], r[0])
     r[0] = CNOT(q[2], r[0])
     r[1] = CNOT(q[1], r[1])
@@ -289,7 +292,8 @@ def GF256_inverse4(number: int) -> int:
     v[9] = CNOT(v[8], v[9])
     v[10] = CNOT(u[4], v[10])
     v[10] = CNOT(v[9], v[10])
-    y[6] = CNOT(y[4], y[6])
+    y[6] = CNOT(v[5], y[6])
+    y[6] = CNOT(v[6], y[6])
     y[6] = CNOT(v[10], y[6])
     y[6] = NOT(y[6])
     v[12] = CNOT(u[10], v[12])
@@ -304,9 +308,11 @@ def GF256_inverse4(number: int) -> int:
     v[16] = CNOT(v[15], v[16])
     v[17] = CNOT(u[2], v[17])
     v[17] = CNOT(v[16], v[17])
-    v[18] = CNOT(y[3], v[18])
+    v[18] = CNOT(v[10], v[18])
+    v[18] = CNOT(v[13], v[18])
     v[18] = CNOT(v[17], v[18])
-    y[7] = CNOT(y[0], y[7])
+    y[7] = CNOT(u[15], y[7])
+    y[7] = CNOT(v[3], y[7])
     y[7] = CNOT(v[18], y[7])
     y[7] = NOT(y[7])
     v[20] = CNOT(u[13], v[20])
@@ -323,9 +329,11 @@ def GF256_inverse4(number: int) -> int:
     v[25] = CNOT(v[24], v[25])
     y[2] = CNOT(u[7], y[2])
     y[2] = CNOT(v[25], y[2])
-    v[27] = CNOT(y[5], v[27])
+    v[27] = CNOT(v[17], v[27])
+    v[27] = CNOT(v[21], v[27])
     v[27] = CNOT(v[24], v[27])
-    v[28] = CNOT(y[0], v[28])
+    v[28] = CNOT(u[15], v[28])
+    v[28] = CNOT(v[3], v[28])
     v[28] = CNOT(v[27], v[28])
     v[29] = CNOT(u[5], v[29])
     v[29] = CNOT(v[28], v[29])
@@ -340,65 +348,47 @@ def GF256_inverse4(number: int) -> int:
     '''
     reverse
     '''
-    y[3] = NOT(y[3])
-    y[0] = NOT(y[0])
-    y[1] = NOT(y[1])
-    y[1] = CNOT(v[29], y[1])
-    y[1] = CNOT(u[3], y[1])
     v[29] = CNOT(v[28], v[29])
     v[29] = CNOT(u[5], v[29])
     v[28] = CNOT(v[27], v[28])
-    v[28] = CNOT(y[0], v[28])
+    v[28] = CNOT(v[3], v[28])
+    v[28] = CNOT(u[15], v[28])
     v[27] = CNOT(v[24], v[27])
-    v[27] = CNOT(y[5], v[27])
-    y[2] = CNOT(v[25], y[2])
-    y[2] = CNOT(u[7], y[2])
+    v[27] = CNOT(v[21], v[27])
+    v[27] = CNOT(v[17], v[27])
     v[25] = CNOT(v[24], v[25])
     v[25] = CNOT(u[8], v[25])
     v[24] = CNOT(v[23], v[24])
     v[24] = CNOT(u[1], v[24])
     v[23] = CNOT(v[16], v[23])
     v[23] = CNOT(v[13], v[23])
-    y[5] = CNOT(v[21], y[5])
-    y[5] = CNOT(v[17], y[5])
     v[21] = CNOT(v[20], v[21])
     v[21] = CNOT(u[11], v[21])
     v[20] = CNOT(v[0], v[20])
     v[20] = CNOT(u[13], v[20])
-    y[7] = NOT(y[7])
-    y[7] = CNOT(v[18], y[7])
-    y[7] = CNOT(y[0], y[7])
     v[18] = CNOT(v[17], v[18])
-    v[18] = CNOT(y[3], v[18])
+    v[18] = CNOT(v[13], v[18])
+    v[18] = CNOT(v[10], v[18])
     v[17] = CNOT(v[16], v[17])
     v[17] = CNOT(u[2], v[17])
     v[16] = CNOT(v[15], v[16])
     v[16] = CNOT(v[9], v[16])
     v[15] = CNOT(u[3], v[15])
     v[15] = CNOT(u[0], v[15])
-    y[3] = CNOT(v[13], y[3])
-    y[3] = CNOT(v[10], y[3])
     v[13] = CNOT(v[12], v[13])
     v[13] = CNOT(v[5], v[13])
     v[12] = CNOT(v[2], v[12])
     v[12] = CNOT(u[10], v[12])
-    y[6] = NOT(y[6])
-    y[6] = CNOT(v[10], y[6])
-    y[6] = CNOT(y[4], y[6])
     v[10] = CNOT(v[9], v[10])
     v[10] = CNOT(u[4], v[10])
     v[9] = CNOT(v[8], v[9])
     v[9] = CNOT(u[7], v[9])
     v[8] = CNOT(u[6], v[8])
     v[8] = CNOT(u[5], v[8])
-    y[4] = CNOT(v[6], y[4])
-    y[4] = CNOT(v[5], y[4])
     v[6] = CNOT(v[3], v[6])
     v[6] = CNOT(u[12], v[6])
     v[5] = CNOT(u[17], v[5])
     v[5] = CNOT(u[13], v[5])
-    y[0] = CNOT(v[3], y[0])
-    y[0] = CNOT(u[15], y[0])
     v[3] = CNOT(v[2], v[3])
     v[3] = CNOT(v[1], v[3])
     v[2] = CNOT(v[0], v[2])
@@ -435,11 +425,6 @@ def GF256_inverse4(number: int) -> int:
     k[1] = CNOT(z[1], k[1])
     k[0] = CNOT(z[2], k[0])
     k[0] = CNOT(z[0], k[0])
-
-    for ele in y:
-        if ele != 0:
-            print("y error")
-            return -1
 
     for ele in v:
         if ele != 0:
@@ -675,6 +660,31 @@ def GF256_inverse4(number: int) -> int:
     for ele in p:
         if ele != 0:
             print("p error")
+            return -1
+
+    for ele in c:
+        if ele != 0:
+            print("c error")
+            return -1
+
+    for ele in z:
+        if ele != 0:
+            print("z error")
+            return -1
+
+    for ele in k:
+        if ele != 0:
+            print("k error")
+            return -1
+
+    for ele in u:
+        if ele != 0:
+            print("u error")
+            return -1
+
+    for ele in v:
+        if ele != 0:
+            print("v error")
             return -1
 
     return ans

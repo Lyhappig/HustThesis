@@ -2,45 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-int get_bit(int x, int i) {
-    return (x >> i) & 1;
-}
-
-void sbox(const int t[4], int z[4]) {
-    int a0 = t[1] ^ t[2];
-    int a1 = t[0] ^ t[1];
-    int a2 = t[2] ^ t[3];
-    int a3 = t[0] ^ t[2];
-    int a4 = t[1] ^ t[3];
-    int a5 = t[3];
-    int b0 = t[0];
-    int b1 = a0 ^ 1;
-    int c0 = b0 & b1;
-    int d0 = a0 ^ a5;
-    int b2 = d0 ^ c0;
-    int b3 = a1 ^ c0 ^ 1;
-    int c1 = b2 & b3;
-    int b4 = b3 ^ a2 ^ c1;
-    int b5 = a0 ^ c1;
-    int c2 = b4 & b5;
-    int d1 = a3 ^ c2;
-    int b6 = d1 ^ a5;
-    int b7 = d0 ^ c2;
-    int c3 = b6 & b7;
-    int b8 = d1 ^ c0 ^ c1;
-    int b9 = a1 ^ a5 ^ c1;
-    int c4 = b8 & b9;
-    int c5 = c2 ^ c3;
-    z[0] = b2 ^ c5 ^ c4;
-    z[1] = a4 ^ c2 ^ c4;
-    z[2] = b4 ^ c3 ^ 1;
-    z[3] = b3 ^ c5 ^ 1;
-}
-
-void x(int &x) {
-	x ^= 1;
-}
-
 void cx(int &x, int &y) {
     y ^= x;
 }
@@ -60,199 +21,215 @@ void QAND_1(int &x, int &y, int &z) {
 	z = 0;
 }
 
-// 5个QAND，69个CNOT
-void qt12(int t[4], int c[6]) {
-	x(t[1]);
-	cx(t[2], t[1]);
-	QAND(t[0], t[1], c[0], c[5]);
-	cx(t[2], t[1]);
-	x(t[1]);
-	cx(t[1], c[4]);
-	cx(t[2], c[4]);
-	cx(t[2], c[3]);
-	cx(t[3], c[3]);
-	cx(t[1], t[2]);
-	cx(t[3], t[2]);
-	cx(c[0], t[2]);
-	x(t[1]);
-	cx(t[0], t[1]);
-	cx(c[0], t[1]);
-	QAND(t[1], t[2], c[1], c[5]);
-	cx(c[3], t[1]);
-	cx(c[1], t[1]);
-	cx(c[1], c[4]);
-	QAND(t[1], c[4], c[2], c[5]);
-	cx(c[1], c[4]);
-	cx(c[3], t[1]);
-	cx(c[1], t[1]);
-	cx(t[0], t[1]);
-	cx(c[0], t[1]);
-	x(t[1]);
-	cx(t[1], t[2]);
-	cx(t[3], t[2]);
-	cx(c[0], t[2]);
-	cx(t[2], c[3]);
-	cx(t[3], c[3]);
-	cx(t[1], c[4]);
-	cx(t[2], c[4]);
-	cx(t[2], t[0]);
-	cx(t[3], t[0]);
-	cx(c[2], t[0]);
-	cx(t[2], t[1]);
-	cx(t[3], t[1]);
-	cx(c[2], t[1]);
-	QAND(t[0], t[1], c[3], c[5]);
-	cx(t[2], t[1]);
-	cx(t[3], t[1]);
-	cx(c[2], t[1]);
-	cx(t[2], t[0]);
-	cx(t[3], t[0]);
-	cx(c[2], t[0]);
-	cx(t[0], t[2]);
-	cx(c[0], t[2]);
-	cx(c[1], t[2]);
-	cx(c[2], t[2]);
-	cx(t[0], t[1]);
-	cx(t[3], t[1]);
-	cx(c[1], t[1]);
-	QAND(t[1], t[2], c[4], c[5]);
-	cx(t[0], t[1]);
-	cx(t[3], t[1]);
-	cx(c[1], t[1]);
-	cx(t[0], t[2]);
-	cx(c[0], t[2]);
-	cx(c[1], t[2]);
-	cx(c[2], t[2]);
-	cx(c[0], t[0]);
-	cx(c[3], t[0]);
-	cx(t[1], c[0]);
-	cx(t[2], c[0]);
-	cx(t[3], c[0]);
-	cx(c[2], c[0]);
-	cx(c[3], c[0]);
-	cx(c[4], c[0]);
-	cx(t[1], c[4]);
-	cx(t[3], c[4]);
-	cx(c[2], c[4]);
-	cx(t[0], c[1]);
-	cx(t[1], c[1]);
-	cx(t[2], c[1]);
-	cx(t[3], c[1]);
-	cx(t[0], c[2]);
-	cx(t[1], c[2]);
+// 不恢复前4个比特
+// 9个QAND，5个QAND_1，52个CNOT
+void qt12(int a[4], int b[4], int d[28]) {
+    cx(a[2], d[6]);
+    cx(a[0], d[6]);
+    cx(b[2], d[7]);
+    cx(b[0], d[7]);
+    cx(a[1], d[8]);
+    cx(a[0], d[8]);
+    cx(b[1], d[9]);
+    cx(b[0], d[9]);
+    cx(a[3], d[10]);
+    cx(a[1], d[10]);
+    cx(b[3], d[11]);
+    cx(b[1], d[11]);
+    cx(d[10], d[4]);
+    cx(d[6], d[4]);
+    cx(d[11], d[5]);
+    cx(d[7], d[5]);
+    cx(a[3], d[12]);
+    cx(a[2], d[12]);
+    cx(b[3], d[13]);
+    cx(b[2], d[13]);
+
+    QAND(d[4], d[5], d[3], d[19]);
+    QAND(d[6], d[7], d[2], d[20]);
+    QAND(d[8], d[9], d[1], d[21]);
+    QAND(d[12], d[13], d[0], d[22]);
+    QAND(d[10], d[11], d[14], d[23]);
+    QAND(a[0], b[0], d[15], d[24]);
+    QAND(a[1], b[1], d[16], d[25]);
+    QAND(a[2], b[2], d[17], d[26]);
+    QAND(a[3], b[3], d[18], d[27]);
+
+    cx(d[2], d[3]);
+    cx(d[1], d[3]);
+    cx(d[15], d[3]);
+    cx(d[14], d[2]);
+    cx(d[15], d[2]);
+    cx(d[16], d[2]);
+    cx(d[0], d[1]);
+    cx(d[15], d[1]);
+    cx(d[18], d[1]);
+    cx(d[15], d[0]);
+    cx(d[16], d[0]);
+    cx(d[17], d[0]);
+
+    QAND_1(a[3], b[3], d[18]);
+    QAND_1(a[2], b[2], d[17]);
+    QAND_1(a[1], b[1], d[16]);
+    QAND_1(a[0], b[0], d[15]);
+    QAND_1(d[10], d[11], d[14]);
+
+    cx(b[3], d[13]);
+    cx(b[2], d[13]);
+    cx(a[3], d[12]);
+    cx(a[2], d[12]);
+    cx(d[11], d[5]);
+    cx(d[7], d[5]);
+    cx(d[10], d[4]);
+    cx(d[6], d[4]);
+    cx(b[3], d[11]);
+    cx(b[1], d[11]);
+    cx(a[3], d[10]);
+    cx(a[1], d[10]);
+    cx(b[1], d[9]);
+    cx(b[0], d[9]);
+    cx(a[1], d[8]);
+    cx(a[0], d[8]);
+    cx(b[2], d[7]);
+    cx(b[0], d[7]);
+    cx(a[2], d[6]);
+    cx(a[0], d[6]);
 }
 
-// 5个QAND_1，69个CNOT
-void qt12_1(int t[4], int c[6]) {
-	cx(t[1], c[2]);
-	cx(t[0], c[2]);
-	cx(t[3], c[1]);
-	cx(t[2], c[1]);
-	cx(t[1], c[1]);
-	cx(t[0], c[1]);
-	cx(c[2], c[4]);
-	cx(t[3], c[4]);
-	cx(t[1], c[4]);
-	cx(c[4], c[0]);
-	cx(c[3], c[0]);
-	cx(c[2], c[0]);
-	cx(t[3], c[0]);
-	cx(t[2], c[0]);
-	cx(t[1], c[0]);
-	cx(c[3], t[0]);
-	cx(c[0], t[0]);
-	cx(c[2], t[2]);
-	cx(c[1], t[2]);
-	cx(c[0], t[2]);
-	cx(t[0], t[2]);
-	cx(c[1], t[1]);
-	cx(t[3], t[1]);
-	cx(t[0], t[1]);
-	QAND_1(t[1], t[2], c[4]);
-	cx(c[1], t[1]);
-	cx(t[3], t[1]);
-	cx(t[0], t[1]);
-	cx(c[2], t[2]);
-	cx(c[1], t[2]);
-	cx(c[0], t[2]);
-	cx(t[0], t[2]);
-	cx(c[2], t[0]);
-	cx(t[3], t[0]);
-	cx(t[2], t[0]);
-	cx(c[2], t[1]);
-	cx(t[3], t[1]);
-	cx(t[2], t[1]);
-	QAND_1(t[0], t[1], c[3]);
-	cx(c[2], t[1]);
-	cx(t[3], t[1]);
-	cx(t[2], t[1]);
-	cx(c[2], t[0]);
-	cx(t[3], t[0]);
-	cx(t[2], t[0]);
-	cx(t[2], c[4]);
-	cx(t[1], c[4]);
-	cx(t[3], c[3]);
-	cx(t[2], c[3]);
-	cx(c[0], t[2]);
-	cx(t[3], t[2]);
-	cx(t[1], t[2]);
-	x(t[1]);
-	cx(c[0], t[1]);
-	cx(t[0], t[1]);
-	cx(c[1], t[1]);
-	cx(c[3], t[1]);
-	cx(c[1], c[4]);
-	QAND_1(t[1], c[4], c[2]);
-	cx(c[1], c[4]);
-	cx(c[1], t[1]);
-	cx(c[3], t[1]);
-	QAND_1(t[1], t[2], c[1]);
-	cx(c[0], t[1]);
-	cx(t[0], t[1]);
-	x(t[1]);
-	cx(c[0], t[2]);
-	cx(t[3], t[2]);
-	cx(t[1], t[2]);
-	cx(t[3], c[3]);
-	cx(t[2], c[3]);
-	cx(t[2], c[4]);
-	cx(t[1], c[4]);
-	x(t[1]);
-	cx(t[2], t[1]);
-	QAND_1(t[0], t[1], c[0]);
-	cx(t[2], t[1]);
-	x(t[1]);
+// 5个QAND，9个QAND_1，52个CNOT
+void qt12_1(int a[4], int b[4], int d[28]) {
+    cx(a[0], d[6]);
+    cx(a[2], d[6]);
+    cx(b[0], d[7]);
+    cx(b[2], d[7]);
+    cx(a[0], d[8]);
+    cx(a[1], d[8]);
+    cx(b[0], d[9]);
+    cx(b[1], d[9]);
+    cx(a[1], d[10]);
+    cx(a[3], d[10]);
+    cx(b[1], d[11]);
+    cx(b[3], d[11]);
+    cx(d[6], d[4]);
+    cx(d[10], d[4]);
+    cx(d[7], d[5]);
+    cx(d[11], d[5]);
+    cx(a[2], d[12]);
+    cx(a[3], d[12]);
+    cx(b[2], d[13]);
+    cx(b[3], d[13]);
+    QAND(d[10], d[11], d[14], d[19]);
+    QAND(a[0], b[0], d[15], d[20]);
+    QAND(a[1], b[1], d[16], d[21]);
+    QAND(a[2], b[2], d[17], d[22]);
+    QAND(a[3], b[3], d[18], d[23]);
+    cx(d[17], d[0]);
+    cx(d[16], d[0]);
+    cx(d[15], d[0]);
+    cx(d[18], d[1]);
+    cx(d[15], d[1]);
+    cx(d[0], d[1]);
+    cx(d[16], d[2]);
+    cx(d[15], d[2]);
+    cx(d[14], d[2]);
+    cx(d[15], d[3]);
+    cx(d[1], d[3]);
+    cx(d[2], d[3]);
+    QAND_1(a[3], b[3], d[18]);
+    QAND_1(a[2], b[2], d[17]);
+    QAND_1(a[1], b[1], d[16]);
+    QAND_1(a[0], b[0], d[15]);
+    QAND_1(d[10], d[11], d[14]);
+    QAND_1(d[12], d[13], d[0]);
+    QAND_1(d[8], d[9], d[1]);
+    QAND_1(d[6], d[7], d[2]);
+    QAND_1(d[4], d[5], d[3]);
+    cx(b[2], d[13]);
+    cx(b[3], d[13]);
+    cx(a[2], d[12]);
+    cx(a[3], d[12]);
+    cx(d[7], d[5]);
+    cx(d[11], d[5]);
+    cx(d[6], d[4]);
+    cx(d[10], d[4]);
+    cx(b[1], d[11]);
+    cx(b[3], d[11]);
+    cx(a[1], d[10]);
+    cx(a[3], d[10]);
+    cx(b[0], d[9]);
+    cx(b[1], d[9]);
+    cx(a[0], d[8]);
+    cx(a[1], d[8]);
+    cx(b[0], d[7]);
+    cx(b[2], d[7]);
+    cx(a[0], d[6]);
+    cx(a[2], d[6]);
 }
 
-// gf16_sbox = [0x0, 0x1, 0x3, 0x2, 0xf, 0xc, 0x9, 0xb, 0xa, 0x6, 0x8, 0x7, 0x5, 0xe, 0xd, 0x4]
+
 int main() {
-	for (int i = 0; i < 16; i++) {
-		int t[4] = {0}, z[4] = {0}, c[6] = {0};
-		t[0] = get_bit(i, 3);
-		t[1] = get_bit(i, 2);
-		t[2] = get_bit(i, 1);
-		t[3] = get_bit(i, 0);
-		sbox(t, z);
-		qt12(t, c);
-		int y1 = (z[0] << 3) | (z[1] << 2) | (z[2] << 1) | z[3];
-		int y2 = (c[0] << 3) | (c[4] << 2) | (c[1] << 1) | c[2];
-		if (y1 != y2) {
-			puts("answer doesn't match");
-			exit(0);
-		}
-		qt12_1(t, c);
-		int k = (t[0] << 3) | (t[1] << 2) | (t[2] << 1) | t[3];
-		for (int j = 0; j < 6; j++) {
-			if (c[j] != 0) {
-				puts("can't revocer qubit");
-				exit(0);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int a[4] = { (i >> 0) & 1, (i >> 1) & 1, (i >> 2) & 1, (i >> 3) & 1 };
+            int b[4] = { (j >> 0) & 1, (j >> 1) & 1, (j >> 2) & 1, (j >> 3) & 1 };
+            int d1[28] = {0};
+            int n = 28;
+            qt12(a, b, d1);
+
+            for (int k = 0; k < 4; k++) {
+                int expected_a = (i >> k) & 1;
+                int expected_b = (j >> k) & 1;
+                if (a[k] != expected_a) {
+                    printf("output X not match\n");
+                    return 0;
+                }
+                if (b[k] != expected_b) {
+                    printf("output Y not match\n");
+                    return 0;
+                }
+            }
+
+            int d2[4] = {0};
+            d2[3] = ((a[3] ^ a[2] ^ a[1] ^ a[0]) & (b[3] ^ b[2] ^ b[1] ^ b[0])) ^ ((a[2] ^ a[0]) & (b[2] ^ b[0])) ^ ((a[1] ^ a[0]) & (b[1] ^ b[0])) ^ (a[0] & b[0]);
+            d2[2] = ((a[3] ^ a[1]) & (b[3] ^ b[1])) ^ ((a[2] ^ a[0]) & (b[2] ^ b[0])) ^ (a[1] & b[1]) ^ (a[0] & b[0]);
+            d2[1] = ((a[3] ^ a[2]) & (b[3] ^ b[2])) ^ (a[3] & b[3]) ^ ((a[1] ^ a[0]) & (b[1] ^ b[0])) ^ (a[0] & b[0]);
+            d2[0] = ((a[3] ^ a[2]) & (b[3] ^ b[2])) ^ (a[2] & b[2]) ^ (a[1] & b[1]) ^ (a[0] & b[0]);
+
+            for (int k = 0; k < 4; k++) {
+                if (d1[k] != d2[k]) {
+                    printf("answer not match\n");
+                    return 0;
+                }
+            }
+
+			for (int k = 4; k < n; k++) {
+				if (d1[k] != 0) {
+					printf("can't recover other bits\n");
+                    return 0;
+				}
 			}
-		}
-		if (k != i) {
-			puts("can't revocer input");
-			exit(0);
-		}
-	}
-	puts("OK");
-	return 0;
+
+            qt12_1(a, b, d1);
+            for (int k = 0; k < 4; k++) {
+                int expected_a = (i >> k) & 1;
+                int expected_b = (j >> k) & 1;
+                if (a[k] != expected_a) {
+                    printf("output X not match\n");
+                    return 0;
+                }
+                if (b[k] != expected_b) {
+                    printf("output Y not match\n");
+                    return 0;
+                }
+            }
+            for (int k = 0; k < n; k++) {
+				if (d1[k] != 0) {
+					printf("can't recover other bits\n");
+                    return 0;
+				}
+			}
+        }
+    }
+    printf("OK\n");
+    return 0;
 }

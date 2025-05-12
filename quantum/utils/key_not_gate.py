@@ -16,7 +16,7 @@ if __name__ == '__main__':
     for x in CK:
         binary_str = bin(x)[2:]
         count = binary_str.count('1')
-        sum += count
+        sum += count * 2
     for y in FK:
         binary_str = bin(y)[2:]
         count = binary_str.count('1')

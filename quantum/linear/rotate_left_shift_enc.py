@@ -1,11 +1,21 @@
-def in_place_rls():
-    x = [0] * 32
+def circ_ls(num, shift, bit_size):
+    shift = shift % bit_size
+    left_part = (num << shift) & ((1 << bit_size) - 1)
+    right_part = num >> (bit_size - shift)
+    result = left_part | right_part
+    return result
 
-    r = 114514
+
+x = [0] * 32
+pos = [10, 11, 20, 21, 30, 31, 24, 25, 2, 3, 12, 13, 14, 15, 8, 9, 18, 19, 4, 5, 22, 23, 0, 1, 26, 27, 28, 29, 6,
+       7, 16, 17]
+
+
+def get_L(number: int):
+    global x
     for i in range(32):
-        x[i] = (r >> (31 - i)) & 1
+        x[i] = (number >> (31 - i)) & 1
 
-    # L
     x[6] = x[6] ^ x[30]
     x[16] = x[16] ^ x[8]
     x[28] = x[28] ^ x[20]
@@ -89,7 +99,15 @@ def in_place_rls():
     x[29] = x[29] ^ x[21]
     x[3] = x[3] ^ x[27]
 
-    # L^{-1}
+    ans = 0
+    for i in range(32):
+        ans = (ans << 1) | x[pos[i]]
+    return ans
+
+
+def get_L_reverse():
+    global x
+
     x[3] = x[3] ^ x[27]
     x[29] = x[29] ^ x[21]
     x[13] = x[13] ^ x[29]
@@ -173,11 +191,21 @@ def in_place_rls():
     x[16] = x[16] ^ x[8]
     x[6] = x[6] ^ x[30]
 
-    y = 0
+    ans = 0
     for i in range(32):
-        y = (y << 1) | x[i]
-    print(y)
+        ans = (ans << 1) | x[i]
+    return ans
 
 
 if __name__ == '__main__':
-    in_place_rls()
+    maxn = 100000
+    flag = True
+    for i in range(1, maxn):
+        t = i ^ circ_ls(i, 2, 32) ^ circ_ls(i, 10, 32) ^ circ_ls(i, 18, 32) ^ circ_ls(i, 24, 32)
+        if t != get_L(i) or i != get_L_reverse():
+            flag = False
+            break
+    if flag:
+        print("OK")
+    else:
+        print("error")
